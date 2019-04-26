@@ -54,6 +54,14 @@ public class PlayFabServerModels {
         
     }
 
+    public static class AddGenericIDRequest {
+        /** Generic service identifier to add to the player account. */
+        public GenericServiceId GenericId;
+        /** PlayFabId of the user to link. */
+        public String PlayFabId;
+        
+    }
+
     /**
      * This API will trigger a player_tag_added event and add a tag with the given TagName and PlayFabID to the corresponding
      * player profile. TagName can be used for segmentation and it is limited to 256 characters. Also there is a limit on the
@@ -912,6 +920,10 @@ public class PlayFabServerModels {
         
     }
 
+    public static class EmptyResult {
+        
+    }
+
     /** Combined entity type and ID structure which uniquely identifies a single entity. */
     public static class EntityKey {
         /** Unique ID of the entity. */
@@ -1495,6 +1507,11 @@ public class PlayFabServerModels {
         WriteAttemptedDuringExport,
         MultiplayerServerTitleQuotaCoresExceeded,
         AutomationRuleNotFound,
+        EntityAPIKeyLimitExceeded,
+        EntityAPIKeyNotFound,
+        EntityAPIKeyOrSecretInvalid,
+        EconomyServiceUnavailable,
+        EconomyServiceInternalError,
         MatchmakingEntityInvalid,
         MatchmakingPlayerAttributesInvalid,
         MatchmakingQueueNotFound,
@@ -1514,6 +1531,8 @@ public class PlayFabServerModels {
         MatchmakingTicketMembershipLimitExceeded,
         MatchmakingUnauthorized,
         MatchmakingQueueLimitExceeded,
+        MatchmakingRequestTypeMismatch,
+        MatchmakingBadRequest,
         TitleConfigNotFound,
         TitleConfigUpdateConflict,
         TitleConfigSerializationError,
@@ -1526,18 +1545,8 @@ public class PlayFabServerModels {
         CatalogItemIdInvalid,
         CatalogSearchParameterInvalid,
         CatalogFeatureDisabled,
-        CatalogConfigMissing,
-        CatalogConfigTooManyContentTypes,
-        CatalogConfigContentTypeTooLong,
-        CatalogConfigTooManyTags,
-        CatalogConfigTagTooLong,
-        CatalogConfigInvalidDeepLinkObject,
-        CatalogConfigInvalidDeepLinkPlatform,
-        CatalogConfigInvalidDeepLinkFormat,
-        CatalogConfigInvalidDisplayPropertyObject,
-        CatalogConfigInvalidDisplayPropertyName,
-        CatalogConfigInvalidDisplayPropertyType,
-        CatalogConfigDisplayPropertyMappingLimit,
+        CatalogConfigInvalid,
+        CatalogUnauthorized,
         ExportInvalidStatusUpdate,
         ExportInvalidPrefix,
         ExportBlobContainerDoesNotExist,
@@ -1551,7 +1560,26 @@ public class PlayFabServerModels {
         ExportKustoExceptionNew_SomeResources,
         ExportKustoExceptionEdit,
         ExportKustoConnectionFailed,
-        ExportUnknownError
+        ExportUnknownError,
+        ExportCantEditPendingExport,
+        ExportLimitExports,
+        ExportLimitEvents
+    }
+
+    public static class GenericPlayFabIdPair {
+        /** Unique generic service identifier for a user. */
+        public GenericServiceId GenericId;
+        /** Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the given generic identifier. */
+        public String PlayFabId;
+        
+    }
+
+    public static class GenericServiceId {
+        /** Name of the service for which the player has a unique identifier. */
+        public String ServiceName;
+        /** Unique identifier of the player in that service. */
+        public String UserId;
+        
     }
 
     /** Request has no paramaters. */
@@ -2098,6 +2126,22 @@ public class PlayFabServerModels {
     public static class GetPlayFabIDsFromFacebookInstantGamesIdsResult {
         /** Mapping of Facebook Instant Games identifiers to PlayFab identifiers. */
         public ArrayList<FacebookInstantGamesPlayFabIdPair> Data;
+        
+    }
+
+    public static class GetPlayFabIDsFromGenericIDsRequest {
+        /**
+         * Array of unique generic service identifiers for which the title needs to get PlayFab identifiers. Currently limited to a
+         * maximum of 10 in a single request.
+         */
+        public ArrayList<GenericServiceId> GenericIDs;
+        
+    }
+
+    /** For generic service identifiers which have not been linked to PlayFab accounts, null will be returned. */
+    public static class GetPlayFabIDsFromGenericIDsResult {
+        /** Mapping of generic service identifiers to PlayFab identifiers. */
+        public ArrayList<GenericPlayFabIdPair> Data;
         
     }
 
@@ -3206,6 +3250,14 @@ public class PlayFabServerModels {
         
     }
 
+    public static class RemoveGenericIDRequest {
+        /** Generic service identifier to be removed from the player. */
+        public GenericServiceId GenericId;
+        /** PlayFabId of the user to remove. */
+        public String PlayFabId;
+        
+    }
+
     /**
      * This API will trigger a player_tag_removed event and remove a tag with the given TagName and PlayFabID from the
      * corresponding player profile. TagName can be used for segmentation and it is limited to 256 characters
@@ -3818,8 +3870,8 @@ public class PlayFabServerModels {
 
     /**
      * This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In
-     * updating the custom data object, keys which already exist in the object will have their values overwritten, while keys
-     * with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.
+     * updating the custom data object, keys which already exist in the object will have their values overwritten, keys with
+     * null values will be removed. No other key-value pairs will be changed apart from those specified in the call.
      */
     public static class UpdateCharacterDataRequest {
         /** Unique PlayFab assigned ID for a specific character owned by a user */

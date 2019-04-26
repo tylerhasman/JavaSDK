@@ -124,7 +124,7 @@ public class PlayFabMultiplayerModels {
     public static class CancelAllMatchmakingTicketsForPlayerRequest {
         /** The entity key of the player whose tickets should be canceled. */
         public EntityKey Entity;
-        /** The Id of the queue from which a player's tickets should be canceled. */
+        /** The name of the queue from which a player's tickets should be canceled. */
         public String QueueName;
         
     }
@@ -140,17 +140,18 @@ public class PlayFabMultiplayerModels {
     }
 
     /**
-     * Only servers and ticket members can cancel a ticket. The ticket can be in four different states when it is cancelled. 1:
+     * Only servers and ticket members can cancel a ticket. The ticket can be in five different states when it is cancelled. 1:
      * the ticket is waiting for members to join it, and it has not started matching. If the ticket is cancelled at this stage,
      * it will never match. 2: the ticket is matching. If the ticket is cancelled, it will stop matching. 3: the ticket is
-     * matched. A matched ticket cannot be cancelled. 4: the ticket is already cancelled and nothing happens. There may be race
-     * conditions between the ticket getting matched and the client making a cancellation request. The client must handle the
-     * possibility that the cancel request fails if a match is found before the cancellation request is processed. We do not
-     * allow resubmitting a cancelled ticket because players must consent to enter matchmaking again. Create a new ticket
-     * instead.
+     * matched. A matched ticket cannot be cancelled. 4: the ticket is already cancelled and nothing happens. 5: the ticket is
+     * waiting for a server. If the ticket is cancelled, server allocation will be stopped. A server may still be allocated due
+     * to a race condition, but that will not be reflected in the ticket. There may be race conditions between the ticket
+     * getting matched and the client making a cancellation request. The client must handle the possibility that the cancel
+     * request fails if a match is found before the cancellation request is processed. We do not allow resubmitting a cancelled
+     * ticket because players must consent to enter matchmaking again. Create a new ticket instead.
      */
     public static class CancelMatchmakingTicketRequest {
-        /** The Id of the queue to join. */
+        /** The name of the queue the ticket is in. */
         public String QueueName;
         /** The Id of the ticket to find a match for. */
         public String TicketId;
@@ -591,7 +592,7 @@ public class PlayFabMultiplayerModels {
          * object.
          */
         public Boolean EscapeObject;
-        /** The Id of the queue to find a match for. */
+        /** The name of the queue to find a match for. */
         public String QueueName;
         /** The Id of the ticket to find a match for. */
         public String TicketId;
@@ -638,7 +639,7 @@ public class PlayFabMultiplayerModels {
         public Boolean EscapeObject;
         /** The Id of a match. */
         public String MatchId;
-        /** The Id of the queue to join. */
+        /** The name of the queue to join. */
         public String QueueName;
         /** Determines whether the matchmaking attributes for each user should be returned in the response for match request. */
         public Boolean ReturnMemberAttributes;
@@ -761,7 +762,7 @@ public class PlayFabMultiplayerModels {
     public static class JoinMatchmakingTicketRequest {
         /** The User who wants to join the ticket. Their Id must be listed in PlayFabIdsToMatchWith. */
         public MatchmakingPlayer Member;
-        /** The Id of the queue to join. */
+        /** The name of the queue to join. */
         public String QueueName;
         /** The Id of the ticket to find a match for. */
         public String TicketId;
@@ -879,7 +880,7 @@ public class PlayFabMultiplayerModels {
     public static class ListMatchmakingTicketsForPlayerRequest {
         /** The entity key for which to find the ticket Ids. */
         public EntityKey Entity;
-        /** The Id of the queue to find a match for. */
+        /** The name of the queue to find a match for. */
         public String QueueName;
         
     }
@@ -978,7 +979,7 @@ public class PlayFabMultiplayerModels {
         public MatchmakingPlayerAttributes Attributes;
         /** The entity key of the matchmaking user. */
         public EntityKey Entity;
-        /** The Id of the team the User has been assigned to by matchmaking. */
+        /** The Id of the team the User is assigned to. */
         public String TeamId;
         
     }
@@ -988,6 +989,8 @@ public class PlayFabMultiplayerModels {
         public String BuildId;
         /** Maximum number of players in a match. */
         public Long MaxMatchSize;
+        /** Maximum number of players in a ticket. */
+        public Long MaxTicketSize;
         /** Minimum number of players in a match. */
         public Long MinMatchSize;
         /** Unique identifier for a Queue. Chosen by the developer. */
@@ -1164,6 +1167,8 @@ public class PlayFabMultiplayerModels {
         public String IPV4Address;
         /** The ports the multiplayer server uses. */
         public ArrayList<Port> Ports;
+        /** The server's region. */
+        public String Region;
         
     }
 
