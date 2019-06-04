@@ -50,3 +50,4 @@ proguard/
 # Log Files
 *.log
 workspace.xml
+*.prefs
